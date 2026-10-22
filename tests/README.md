@@ -31,6 +31,11 @@ Carga la app en Chromium real, sube los fixtures cifrados, teclea la clave, proc
 verifica las fichas de resumen, el filtrado, la tabla virtualizada y la descarga del Excel,
 exigiendo **cero errores** de consola o de página.
 
+`node tests/browser/e2e-demo.mjs` prueba el ejemplo guiado: que los avisos vacíos estén
+ocultos al abrir, que «Ver un ejemplo» cargue archivos y clave, que las fichas coincidan con
+`fixtures/demo-expected.json`, y que el ejemplo se retire al arrastrar un archivo propio.
+`node tests/browser/screenshots.mjs` genera capturas (escritorio y móvil) para revisión visual.
+
 ## Carpeta `fixtures/`
 
 Herramientas **solo de prueba** (no forman parte de la app): generador de bases sintéticas

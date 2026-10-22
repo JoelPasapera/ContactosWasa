@@ -7,7 +7,7 @@ import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { encryptCrypt15 } from './crypt15-encrypt.mjs';
 
 // DDL real de WhatsApp 2.26 para las tablas que usa la aplicación.
-const DDL_MSG = {
+export const DDL_MSG = {
   jid: 'CREATE TABLE jid (_id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT NOT NULL, server TEXT NOT NULL, agent INTEGER, type INTEGER, raw_string TEXT, device INTEGER)',
   chat: 'CREATE TABLE chat (_id INTEGER PRIMARY KEY AUTOINCREMENT, jid_row_id INTEGER UNIQUE, hidden INTEGER, subject TEXT, created_timestamp INTEGER, display_message_row_id INTEGER, sort_timestamp INTEGER)',
   message:
@@ -21,7 +21,7 @@ const DDL_MSG = {
   message_system: 'CREATE TABLE message_system (message_row_id INTEGER PRIMARY KEY, action_type INTEGER NOT NULL)',
   message_system_group: 'CREATE TABLE message_system_group (message_row_id INTEGER PRIMARY KEY, is_me_joined INTEGER)',
 };
-const DDL_WA = {
+export const DDL_WA = {
   wa_contacts:
     'CREATE TABLE wa_contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, jid TEXT NOT NULL, is_whatsapp_user BOOLEAN NOT NULL, number TEXT, display_name TEXT, given_name TEXT, family_name TEXT, wa_name TEXT, sort_name TEXT, nickname TEXT)',
 };

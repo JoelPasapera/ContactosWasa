@@ -64,6 +64,16 @@ npx serve .
 
 Luego abre `http://localhost:8000`. También funciona publicada en **GitHub Pages** o
 cualquier hosting estático; sigue siendo 100 % local porque todo corre en el navegador.
+Si abres `index.html` con doble clic, la página muestra un aviso: así el navegador bloquea la
+aplicación.
+
+### Probar sin tus datos
+
+El botón **«Ver un ejemplo»** carga dos archivos de ejemplo (`msgstore.db.crypt15` y
+`wa.db.crypt15`) con su clave, y señala el siguiente paso: pulsar **Procesar**. Sirve para
+practicar el flujo completo antes de buscar tus propios archivos. Los datos son ficticios:
+nombres inventados y números del rango +1 202 555 0100–0199, reservado para ficción. En cuanto
+arrastras un archivo tuyo, el ejemplo se retira solo.
 
 Navegadores: Chrome/Edge 94+, Firefox 114+, Safari 16.4+ (hace falta `WebCrypto`,
 `DecompressionStream` y Web Workers de módulo).
@@ -104,7 +114,11 @@ js/
 │  ├─ table.js (tabla virtualizada) · format.js · error-messages.js · download.js
 ├─ app/           Composición
 │  ├─ state.js · controller.js · export-controller.js · main.js
+├─ demo/          Ejemplo guiado (se carga solo al pedirlo)
+│  ├─ demo-loader.js · demo-data.js (generado por tools/build-demo.mjs)
 └─ util/          bytes.js · errors.js · rowid-set.js
+tools/
+└─ build-demo.mjs  Regenera los archivos de ejemplo cifrados
 ```
 
 ### Decisiones de rendimiento
@@ -146,9 +160,10 @@ El proyecto se probó a fondo (ver `tests/`):
 ```bash
 node tests/node/run.mjs           # suite autocontenida (solo Node 22+)
 
-# Prueba de navegador (requiere Playwright y Chromium):
+# Pruebas de navegador (requieren Playwright y Chromium):
 node tests/browser/serve.mjs "$PWD" 8099 &
-node tests/browser/e2e.mjs
+node tests/browser/e2e.mjs        # flujo completo con copias cifradas
+node tests/browser/e2e-demo.mjs   # ejemplo guiado
 ```
 
 ---

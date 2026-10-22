@@ -11,10 +11,12 @@ import { formatSize } from './format.js';
 export class DropZone {
   /**
    * @param {HTMLElement} mount
-   * @param {(files: File[]) => void} onAdd
+   * @param {(files: File[]) => void} onAdd       avisa cada cambio de la lista
+   * @param {() => void} [beforeUserAdd]          se llama antes de que el usuario añada archivos
    */
-  constructor(mount, onAdd) {
+  constructor(mount, onAdd, beforeUserAdd = () => {}) {
     this.onAdd = onAdd;
+    this.beforeUserAdd = beforeUserAdd;
     /** @type {File[]} */
     this.files = [];
 
@@ -54,8 +56,19 @@ export class DropZone {
     });
   }
 
+  /**
+   * Sustituye la lista completa (lo usa la demostración).
+   * @param {File[]} files
+   */
+  setFiles(files) {
+    this.files = [...files];
+    this.#renderList();
+    this.onAdd(this.files);
+  }
+
   /** @param {File[]} incoming */
   #add(incoming) {
+    this.beforeUserAdd();
     for (const f of incoming) {
       if (!this.files.some((x) => x.name === f.name && x.size === f.size)) this.files.push(f);
     }
