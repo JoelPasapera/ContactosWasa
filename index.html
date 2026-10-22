@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Padrón de WhatsApp</title>
+    <meta
+      name="description"
+      content="Exporta tus contactos de WhatsApp y descubre con quién iniciaste conversación. Todo ocurre en tu navegador: nada se sube a ningún servidor."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📇</text></svg>" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="masthead">
+        <h1 class="masthead__title">Padrón de WhatsApp</h1>
+        <p class="masthead__subtitle">
+          Exporta todos tus contactos y descubre con quién iniciaste cada conversación.
+        </p>
+        <p class="masthead__privacy">
+          <span class="lock" aria-hidden="true">🔒</span>
+          Todo se procesa <strong>dentro de tu navegador</strong>. Tus archivos y tu clave nunca salen del dispositivo.
+        </p>
+      </header>
+
+      <main>
+        <section id="setup" class="card" aria-labelledby="setup-title">
+          <h2 id="setup-title" class="card__title">1 · Carga tu copia</h2>
+
+          <div id="dropzone"></div>
+
+          <div class="field">
+            <label class="field__label" for="key-input">Clave de cifrado</label>
+            <input
+              id="key-input"
+              class="field__input mono"
+              type="text"
+              inputmode="latin"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="0123 4567 89ab cdef …  (64 dígitos)"
+            />
+            <p id="key-help" class="field__help">
+              Clave de 64 dígitos (opcional si adjuntas encrypted_backup.key).
+            </p>
+          </div>
+
+          <label class="switch">
+            <input id="include-groups" type="checkbox" checked />
+            <span>Incluir grupos en el padrón</span>
+          </label>
+
+          <div class="actions">
+            <button id="process" class="btn btn--primary" type="button">Procesar</button>
+            <button id="reset" class="btn btn--ghost" type="button">Limpiar</button>
+          </div>
+
+          <div id="error" class="error" role="alert" hidden></div>
+
+          <details class="help">
+            <summary>¿Cómo consigo estos archivos?</summary>
+            <div class="help__body">
+              <p><strong>La clave de 64 dígitos</strong> (para copias cifradas de extremo a extremo):</p>
+              <ol>
+                <li>En el teléfono abre WhatsApp → <em>Ajustes</em> → <em>Chats</em> → <em>Copia de seguridad</em>.</li>
+                <li>Entra en <em>Cifrado de extremo a extremo</em> y elige ver/anotar tu clave de 64 dígitos.</li>
+              </ol>
+              <p><strong>El archivo de la copia</strong> <code>msgstore.db.crypt15</code> está en el teléfono, en:</p>
+              <p class="mono path">Android/media/com.whatsapp/WhatsApp/Databases/</p>
+              <p>
+                Para que salgan los <strong>nombres</strong> y no solo los números, añade también
+                <code>wa.db</code> (o <code>wa.db.crypt15</code>) si lo tienes, o un archivo
+                <code>.vcf</code> exportado de tu agenda. Son opcionales.
+              </p>
+              <p class="help__note">
+                Consejo: copia primero los archivos a la computadora (por cable o nube) y luego suéltalos aquí.
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <div id="progress-mount"></div>
+
+        <section id="results" class="card" aria-labelledby="results-title" hidden>
+          <div class="results__head">
+            <h2 id="results-title" class="card__title">2 · Tu padrón</h2>
+            <span id="view-count" class="results__count"></span>
+          </div>
+          <div id="summary-mount"></div>
+          <div id="filters-mount"></div>
+          <div id="result-note"></div>
+          <div id="table-mount"></div>
+          <div id="export-mount" class="export"></div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <p>
+          Hecho para funcionar sin conexión y sin servidores. El código corre por completo en tu
+          navegador.
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="js/app/main.js"></script>
+  </body>
+</html>
