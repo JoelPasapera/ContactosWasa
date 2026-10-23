@@ -51,32 +51,37 @@ Consejo: copia los archivos del teléfono a la computadora (cable o nube) y lueg
 
 ## Cómo ejecutarla
 
-Como usa **módulos ES** y un **Web Worker**, hay que servirla por HTTP (no vale abrir
-`index.html` con `file://`). Cualquier servidor estático sirve:
+**Lo más simple: abre `dist/padron.html` con doble clic.** Es la app completa en un solo
+archivo (CSS y JS en línea, Worker incluido), funciona sin conexión y sin servidor. También
+puedes subir ese archivo a **GitHub Pages** o a cualquier hosting estático; sigue siendo 100 %
+local porque todo corre en el navegador.
+
+`index.html` es la versión de **desarrollo** (módulos separados): necesita un servidor
+(`python3 -m http.server 8000` y luego `http://localhost:8000`). Si la abres con doble clic,
+muestra un aviso que remite a `dist/padron.html`.
+
+Para regenerar `dist/` tras cambiar el código:
 
 ```bash
-# Con Python
-python3 -m http.server 8000
-
-# o con Node
-npx serve .
+node tools/build-single.mjs   # dist/padron.html (doble clic) y dist/artifact.html (visor de claude.ai)
 ```
 
-Luego abre `http://localhost:8000`. También funciona publicada en **GitHub Pages** o
-cualquier hosting estático; sigue siendo 100 % local porque todo corre en el navegador.
-Si abres `index.html` con doble clic, la página muestra un aviso: así el navegador bloquea la
-aplicación.
+### El ejemplo de bienvenida
 
-### Probar sin tus datos
+Al abrir, la página carga y procesa un **ejemplo con datos inventados**, marcado como tal, para
+que la primera vista ya muestre lo que obtendrás. Los archivos del ejemplo llevan la etiqueta
+«EJEMPLO»; en cuanto arrastras un archivo tuyo, el ejemplo se retira solo. El botón **«Ver el
+ejemplo»** lo vuelve a mostrar. Los datos son ficticios: nombres inventados y números del rango
++1 202 555 0100–0199, reservado para ficción.
 
-El botón **«Ver un ejemplo»** carga dos archivos de ejemplo (`msgstore.db.crypt15` y
-`wa.db.crypt15`) con su clave, y señala el siguiente paso: pulsar **Procesar**. Sirve para
-practicar el flujo completo antes de buscar tus propios archivos. Los datos son ficticios:
-nombres inventados y números del rango +1 202 555 0100–0199, reservado para ficción. En cuanto
-arrastras un archivo tuyo, el ejemplo se retira solo.
+### En el visor de artefactos de claude.ai
+
+El visor solo admite scripts y estilos en línea, así que publica `dist/artifact.html`. Las
+descargas pasan por la capacidad `downloads` del visor, que pide confirmación; como no admite
+archivos `.vcf` sueltos, ahí la vCard viaja dentro del ZIP.
 
 Navegadores: Chrome/Edge 94+, Firefox 114+, Safari 16.4+ (hace falta `WebCrypto`,
-`DecompressionStream` y Web Workers de módulo).
+`DecompressionStream` y Web Workers).
 
 ---
 
@@ -106,7 +111,7 @@ js/
 ├─ export/        Escritores de salida (desde cero)
 │  ├─ xlsx.js · zip.js · crc32.js · csv.js · vcard-export.js · report.js
 ├─ worker/        Procesamiento fuera del hilo principal
-│  ├─ extract-worker.js · protocol.js
+│  ├─ extract-worker.js · protocol.js · spawn.js (archivo o blob:)
 ├─ backup/        Orquestación
 │  ├─ loader.js · pipeline.js
 ├─ ui/            Componentes de interfaz (DOM aislado aquí)
@@ -118,7 +123,11 @@ js/
 │  ├─ demo-loader.js · demo-data.js (generado por tools/build-demo.mjs)
 └─ util/          bytes.js · errors.js · rowid-set.js
 tools/
-└─ build-demo.mjs  Regenera los archivos de ejemplo cifrados
+├─ build-single.mjs  Empaquetador propio: genera dist/ (un solo archivo)
+└─ build-demo.mjs    Regenera los archivos de ejemplo cifrados
+dist/
+├─ padron.html       La app en un solo archivo (doble clic)
+└─ artifact.html     La misma app como fragmento para el visor de claude.ai
 ```
 
 ### Decisiones de rendimiento
@@ -162,8 +171,14 @@ node tests/node/run.mjs           # suite autocontenida (solo Node 22+)
 
 # Pruebas de navegador (requieren Playwright y Chromium):
 node tests/browser/serve.mjs "$PWD" 8099 &
-node tests/browser/e2e.mjs        # flujo completo con copias cifradas
-node tests/browser/e2e-demo.mjs   # ejemplo guiado
+PAGE=/ node tests/browser/e2e.mjs                  # flujo completo, versión modular
+PAGE=/dist/padron.html node tests/browser/e2e.mjs  # flujo completo, un solo archivo
+PAGE=/dist/padron.html node tests/browser/e2e-demo.mjs
+
+# Un solo archivo con doble clic (file://) y dentro de un visor simulado
+# (mismo esqueleto y una CSP modelada sobre la del visor de claude.ai):
+node tests/browser/viewer-sim.mjs "$PWD/dist" "$PWD/dist/artifact.html" 8098 &
+node tests/browser/single-file.mjs
 ```
 
 ---

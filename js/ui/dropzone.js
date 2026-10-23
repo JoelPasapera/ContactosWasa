@@ -19,6 +19,10 @@ export class DropZone {
     this.beforeUserAdd = beforeUserAdd;
     /** @type {File[]} */
     this.files = [];
+    /** Etiqueta de las fichas marcadas (p. ej. «ejemplo»). */
+    this.tag = '';
+    /** @type {Set<File>} */
+    this.tagged = new Set();
 
     this.input = el('input', { type: 'file', multiple: true, class: 'dropzone__input', id: 'file-input' });
     this.input.addEventListener('change', () => {
@@ -57,11 +61,15 @@ export class DropZone {
   }
 
   /**
-   * Sustituye la lista completa (lo usa la demostración).
+   * Sustituye la lista completa (lo usa el ejemplo). Con `tag`, cada ficha
+   * muestra esa etiqueta para que se vea que no son archivos del usuario.
    * @param {File[]} files
+   * @param {string} [tag]
    */
-  setFiles(files) {
+  setFiles(files, tag = '') {
     this.files = [...files];
+    this.tag = tag;
+    this.tagged = new Set(tag ? files : []);
     this.#renderList();
     this.onAdd(this.files);
   }
@@ -86,18 +94,19 @@ export class DropZone {
   #renderList() {
     clear(this.list);
     this.files.forEach((f, i) => {
-      this.list.append(
-        el('li', { class: 'dropzone__file' }, [
-          el('span', { class: 'dropzone__file-name' }, [f.name]),
-          el('span', { class: 'dropzone__file-size' }, [formatSize(f.size)]),
-          el('button', { type: 'button', class: 'dropzone__remove', 'aria-label': `Quitar ${f.name}`, onclick: () => this.#remove(i) }, ['✕']),
-        ]),
+      const parts = [el('span', { class: 'dropzone__file-name' }, [f.name])];
+      if (this.tagged.has(f)) parts.push(el('span', { class: 'dropzone__tag' }, [this.tag]));
+      parts.push(
+        el('span', { class: 'dropzone__file-size' }, [formatSize(f.size)]),
+        el('button', { type: 'button', class: 'dropzone__remove', 'aria-label': `Quitar ${f.name}`, onclick: () => this.#remove(i) }, ['✕']),
       );
+      this.list.append(el('li', { class: 'dropzone__file' }, parts));
     });
   }
 
   reset() {
     this.files = [];
+    this.tagged = new Set();
     this.#renderList();
   }
 }

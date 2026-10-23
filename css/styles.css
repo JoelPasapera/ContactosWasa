@@ -1,4 +1,7 @@
-/* Padrón de WhatsApp — estilos. Tokens en :root, tema oscuro por media query. */
+/* Padrón de WhatsApp — estilos.
+   Herramienta de una columna: guía arriba, carga de archivos, padrón y exportación.
+   Tokens de color en :root (claro); el oscuro se redefine según el sistema y
+   según la elección explícita del visor (data-theme). */
 
 :root {
   --bg: #f4f6f8;
@@ -23,7 +26,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #11171b;
     --surface: #1a2227;
     --surface-2: #212b31;
@@ -38,7 +41,26 @@
     --danger: #ff6b5e;
     --danger-soft: #3a1f1c;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #11171b;
+  --surface: #1a2227;
+  --surface-2: #212b31;
+  --border: #2d3a42;
+  --text: #e7edf1;
+  --text-dim: #9aa7b0;
+  --accent: #2ea37a;
+  --accent-ink: #06130d;
+  --accent-soft: #163528;
+  --me: #4cc79a;
+  --them: #e0a24a;
+  --danger: #ff6b5e;
+  --danger-soft: #3a1f1c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
 }
 
 * {
@@ -67,7 +89,18 @@ body {
 .app {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 24px 16px 64px;
+  padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* --- Cabecera --- */
@@ -220,39 +253,6 @@ body {
   color: var(--danger);
 }
 
-/* --- Ayuda desplegable --- */
-.help {
-  margin-top: 20px;
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-}
-.help summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--accent);
-}
-.help__body {
-  font-size: 0.9rem;
-  color: var(--text-dim);
-}
-.help__body code {
-  font-family: var(--mono);
-  background: var(--surface-2);
-  padding: 1px 5px;
-  border-radius: 5px;
-  font-size: 0.85em;
-}
-.path {
-  background: var(--surface-2);
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.help__note {
-  font-style: italic;
-}
-
 /* --- Zona de archivos --- */
 .dropzone {
   display: flex;
@@ -312,6 +312,16 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.dropzone__tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--them) 16%, transparent);
+  color: var(--them);
 }
 .dropzone__file-size {
   color: var(--text-dim);
@@ -652,6 +662,7 @@ body {
 }
 .link {
   font: inherit;
+  font-weight: 600;
   color: var(--accent);
   background: none;
   border: none;
@@ -659,6 +670,61 @@ body {
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+/* --- Cómo conseguir tus archivos --- */
+.howto {
+  scroll-margin-top: 16px;
+}
+.howto:focus {
+  outline: none;
+}
+.howto:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.howto__intro {
+  margin: -6px 0 14px;
+  color: var(--text-dim);
+}
+.howto__steps {
+  margin: 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 12px;
+  line-height: 1.55;
+}
+.howto__steps li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+.howto__steps code,
+.howto__note code {
+  font-family: var(--mono);
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 0.85em;
+}
+.howto .path {
+  display: block;
+  margin: 6px 0;
+  background: var(--surface-2);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 0.88rem;
+}
+.howto__note {
+  margin: 16px 0 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.hint code {
+  font-family: var(--mono);
+  font-size: 0.85em;
 }
 
 .demo-cta {
@@ -687,26 +753,6 @@ body {
   color: var(--accent-ink);
 }
 
-/* Señala el siguiente paso tras cargar el ejemplo. */
-.btn.is-attention {
-  animation: attention 1.4s ease-in-out infinite;
-}
-@keyframes attention {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .btn.is-attention {
-    animation: none;
-    outline: 3px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
 .hint {
   margin: 14px 0 0;
   padding: 11px 14px;

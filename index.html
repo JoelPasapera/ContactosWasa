@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Padrón de WhatsApp</title>
     <meta
       name="description"
@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div class="app">
+    <!-- page:start -->
+    <div class="app" lang="es">
       <header class="masthead">
         <h1 class="masthead__title">Padrón de WhatsApp</h1>
         <p class="masthead__subtitle">
@@ -25,14 +26,16 @@
       </header>
 
       <main>
+        <!-- dev-only:start -->
         <div id="file-warning" class="warning" role="alert" hidden>
-          <strong>Así no va a funcionar: abriste la página con doble clic.</strong>
+          <strong>Así no va a funcionar: abriste la versión de desarrollo con doble clic.</strong>
           <span>
-            Cuando se abre como archivo suelto, el navegador bloquea la aplicación. Ábrela desde el
-            enlace que te compartí, o en esta carpeta ejecuta <code>python -m http.server</code> y
-            entra a <code>http://localhost:8000</code>.
+            Esta versión necesita un servidor. Abre en su lugar <code>dist/padron.html</code>, que sí
+            funciona con doble clic, o en esta carpeta ejecuta <code>python -m http.server</code> y entra a
+            <code>http://localhost:8000</code>.
           </span>
         </div>
+        <!-- dev-only:end -->
 
         <section id="setup" class="card" aria-labelledby="setup-title">
           <h2 id="setup-title" class="card__title">Cómo se usa</h2>
@@ -43,7 +46,7 @@
               <div>
                 <strong>Consigue dos cosas de tu teléfono:</strong> el archivo
                 <code>msgstore.db.crypt15</code> y tu clave de 64 dígitos.
-                <button type="button" class="link" data-open-help>¿Dónde los encuentro?</button>
+                <a href="#conseguir" class="link" data-open-help>¿Dónde los encuentro?</a>
               </div>
             </li>
             <li class="guide__step">
@@ -58,10 +61,11 @@
 
           <div class="demo-cta">
             <p>
-              La app <strong>no se conecta</strong> a WhatsApp ni a WhatsApp Web: solo lee el archivo de
-              copia que tú le das. ¿Quieres ver cómo funciona antes de buscar tus archivos?
+              Más abajo ves un <strong>ejemplo ya procesado</strong>, con datos inventados: así se verá tu
+              lista. La app no se conecta a WhatsApp ni a WhatsApp Web; solo lee el archivo de copia que tú
+              le das.
             </p>
-            <button id="demo" class="btn btn--outline" type="button">▶ Ver un ejemplo</button>
+            <button id="demo" class="btn btn--outline" type="button">▶ Ver el ejemplo</button>
           </div>
 
           <div id="dropzone"></div>
@@ -92,40 +96,49 @@
           </div>
 
           <p id="demo-hint" class="hint" role="status" hidden>
-            👆 Cargué dos <strong>archivos de ejemplo</strong> y su clave (míralos arriba). Ahora pulsa
-            <strong>Procesar</strong>.
+            Los dos archivos y la clave de arriba son <strong>del ejemplo</strong>. Para ver tus contactos,
+            arrastra tu <code>msgstore.db.crypt15</code> al recuadro y pega tu clave: el ejemplo se quita solo.
           </p>
 
           <div id="error" class="error" role="alert" hidden></div>
+        </section>
 
-          <details id="help" class="help">
-            <summary>¿Dónde encuentro el archivo y la clave?</summary>
-            <div class="help__body">
-              <ol>
-                <li>
-                  En el teléfono: WhatsApp → <em>Ajustes</em> → <em>Chats</em> → <em>Copia de seguridad</em> →
-                  <em>Copia de seguridad cifrada de extremo a extremo</em> → <em>Activar</em>, y elige
-                  <strong>«Usar clave de cifrado de 64 dígitos»</strong> (no contraseña). Anota la clave.
-                </li>
-                <li>En esa misma pantalla toca <strong>«Guardar»</strong> para crear una copia nueva.</li>
-                <li>Conecta el teléfono a la PC por USB, desbloquéalo y elige <strong>«Transferencia de archivos»</strong>.</li>
-                <li>
-                  En la PC abre <em>Este equipo</em> → tu teléfono → <em>Almacenamiento interno</em> y entra a:
-                  <p class="mono path">Android/media/com.whatsapp/WhatsApp/Databases/</p>
-                  Copia <code>msgstore.db.crypt15</code> a tu escritorio.
-                </li>
-                <li>
-                  Opcional, para ver <strong>nombres</strong> y no solo números: en
-                  <span class="mono">WhatsApp/Backups/</span> copia también el archivo que empieza por
-                  <code>wa.db</code>.
-                </li>
-              </ol>
-              <p class="help__note">
-                Si usas WhatsApp Business, la carpeta es <span class="mono">com.whatsapp.w4b/WhatsApp Business</span>.
-                También sirve un <code>.vcf</code> exportado de tus contactos para poner nombres.
-              </p>
-            </div>
-          </details>
+        <section id="conseguir" class="card howto" tabindex="-1" aria-labelledby="howto-title">
+          <h2 id="howto-title" class="card__title">Cómo conseguir tus archivos</h2>
+          <p class="howto__intro">
+            Se hace una sola vez y tarda unos minutos. Necesitas tu teléfono Android, un cable USB y la PC.
+          </p>
+          <ol class="howto__steps">
+            <li>
+              <strong>Activa la clave de 64 dígitos.</strong> En el teléfono: WhatsApp → Ajustes → Chats →
+              Copia de seguridad → Copia de seguridad cifrada de extremo a extremo → Activar, y elige
+              <strong>«Usar clave de cifrado de 64 dígitos»</strong> (no contraseña). Anota la clave y guárdala
+              bien: sin ella no se puede restaurar la copia.
+            </li>
+            <li>
+              <strong>Haz una copia ahora.</strong> En esa misma pantalla toca <strong>«Guardar»</strong>. Así se
+              crea un <code>msgstore.db.crypt15</code> al día.
+            </li>
+            <li>
+              <strong>Conecta el teléfono por USB.</strong> Desbloquéalo y, en el aviso que aparece, elige
+              <strong>«Transferencia de archivos»</strong>.
+            </li>
+            <li>
+              <strong>Copia el archivo a la PC.</strong> Abre Este equipo → tu teléfono → Almacenamiento interno y
+              entra a:
+              <span class="path mono">Android/media/com.whatsapp/WhatsApp/Databases/</span>
+              Copia <code>msgstore.db.crypt15</code> a tu escritorio.
+            </li>
+            <li>
+              <strong>Opcional, para ver nombres.</strong> En <span class="mono">WhatsApp/Backups/</span> copia
+              también el archivo que empieza por <code>wa.db</code>. Sin él, tus contactos salen solo con su
+              número.
+            </li>
+          </ol>
+          <p class="howto__note">
+            Si usas WhatsApp Business, la carpeta es <span class="mono">com.whatsapp.w4b/WhatsApp Business</span>.
+            También sirve un archivo <code>.vcf</code> exportado de tus contactos para poner los nombres.
+          </p>
         </section>
 
         <div id="progress-mount"></div>
@@ -136,8 +149,8 @@
             <span id="view-count" class="results__count"></span>
           </div>
           <div id="demo-banner" class="demo-banner" hidden>
-            <strong>Estás viendo datos de EJEMPLO, inventados.</strong>
-            <span>Para ver tus contactos: pulsa «Limpiar», arrastra tu <code>msgstore.db.crypt15</code> y pega tu clave.</span>
+            <strong>Estás viendo un EJEMPLO con datos inventados.</strong>
+            <span>Para ver tus contactos, arrastra tu <code>msgstore.db.crypt15</code> en el recuadro de arriba y pega tu clave.</span>
           </div>
           <div id="summary-mount"></div>
           <p class="legend">
@@ -160,10 +173,11 @@
         </p>
       </footer>
     </div>
+    <!-- page:end -->
 
+    <!-- dev-only:start -->
     <script>
-      // Script clásico (no módulo): sí se ejecuta al abrir con doble clic, cuando
-      // el navegador bloquea los módulos. Avisa y desactiva el botón.
+      // Versión de desarrollo: los módulos no cargan con doble clic (file://).
       if (location.protocol === 'file:') {
         document.getElementById('file-warning').hidden = false;
         document.getElementById('process').disabled = true;
@@ -171,5 +185,6 @@
       }
     </script>
     <script type="module" src="js/app/main.js"></script>
+    <!-- dev-only:end -->
   </body>
 </html>

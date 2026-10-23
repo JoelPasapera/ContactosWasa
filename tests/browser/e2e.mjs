@@ -13,6 +13,7 @@ import { bytesToHex } from '../../js/util/bytes.js';
 
 const { chromium } = playwright;
 const BASE = process.env.BASE || 'http://127.0.0.1:8099';
+const PAGE = process.env.PAGE || '/';
 const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
 const dir = mkdtempSync(join(tmpdir(), 'padron-e2e-'));
@@ -26,15 +27,19 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
 page.on('console', (m) => m.type() === 'error' && errors.push(`console.error: ${m.text()}`));
 
-await page.goto(BASE, { waitUntil: 'networkidle' });
+await page.goto(BASE + PAGE, { waitUntil: 'networkidle' });
 assert.equal(await page.title(), 'Padrón de WhatsApp');
 
+// La página abre con el ejemplo procesado; el usuario lo reemplaza con sus archivos.
+await page.waitForSelector('#demo-banner:not([hidden])', { timeout: 30000 });
 await page.setInputFiles('#file-input', [`${dir}/syn-msgstore.db.crypt15`, `${dir}/syn-wa.db.crypt15`]);
+assert.equal(await page.isVisible('#results'), false, 'el ejemplo se retira al traer archivos propios');
 await page.fill('#key-input', rootHex);
 await page.click('#process');
 
 await page.waitForSelector('#results:not([hidden])', { timeout: 60000 });
 await page.waitForFunction(() => /\d/.test(document.getElementById('view-count')?.textContent || ''));
+assert.equal(await page.isVisible('#demo-banner'), false, 'resultado propio, sin aviso de ejemplo');
 
 const num = (s) => Number(String(s).split('de')[0].replace(/\D/g, ''));
 const chips = await page.$$eval('.chip__value', (ns) => ns.map((n) => Number(n.textContent.replace(/\D/g, ''))));
@@ -64,7 +69,7 @@ await page.click('.chip:nth-child(1)');
 await page.waitForTimeout(150);
 
 // Exportar Excel de verdad desde el navegador.
-const [download] = await Promise.all([page.waitForEvent('download'), page.click('.exporters .btn--primary')]);
+const [download] = await Promise.all([page.waitForEvent('download'), page.click('#export-xlsx')]);
 const xlsxPath = `${dir}/descarga.xlsx`;
 await download.saveAs(xlsxPath);
 assert.ok(readFileSync(xlsxPath).length > 2000, 'xlsx descargado no vacío');

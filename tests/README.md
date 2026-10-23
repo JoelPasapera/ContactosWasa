@@ -31,10 +31,17 @@ Carga la app en Chromium real, sube los fixtures cifrados, teclea la clave, proc
 verifica las fichas de resumen, el filtrado, la tabla virtualizada y la descarga del Excel,
 exigiendo **cero errores** de consola o de página.
 
-`node tests/browser/e2e-demo.mjs` prueba el ejemplo guiado: que los avisos vacíos estén
-ocultos al abrir, que «Ver un ejemplo» cargue archivos y clave, que las fichas coincidan con
-`fixtures/demo-expected.json`, y que el ejemplo se retire al arrastrar un archivo propio.
-`node tests/browser/screenshots.mjs` genera capturas (escritorio y móvil) para revisión visual.
+`node tests/browser/e2e-demo.mjs` prueba el ejemplo de bienvenida: que la página abra con él
+ya procesado y marcado, que las fichas coincidan con `fixtures/demo-expected.json`, que la
+ayuda esté siempre visible y que el ejemplo se retire al arrastrar un archivo propio. Ambas
+pruebas aceptan `PAGE=/` (versión modular) o `PAGE=/dist/padron.html` (un solo archivo).
+
+`node tests/browser/single-file.mjs` comprueba `dist/padron.html` abierto con doble clic
+(file://) y `dist/artifact.html` dentro de un visor simulado (`viewer-sim.mjs`: mismo
+esqueleto y una CSP modelada sobre la del visor de claude.ai) con un sustituto de
+`window.claude`, verificando que las descargas pasen por la capacidad `downloads`.
+`viewer-probe.mjs` informa qué bloquea la CSP en cualquier página, y
+`screenshots.mjs` genera capturas (escritorio, móvil y tema oscuro) para revisión visual.
 
 ## Carpeta `fixtures/`
 
